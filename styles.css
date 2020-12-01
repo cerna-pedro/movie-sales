@@ -5,15 +5,12 @@
   --tooltip-bg: rgb(12, 50, 61);
   --color: rgb(223, 223, 223);
   --opacity: 0.5;
-  --state-stroke: black;
-  --county-stroke: gray;
 }
 
 * {
   margin: 0;
   padding: 0;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   color: var(--color);
   font-family: inherit;
 }
@@ -28,13 +25,8 @@ body {
   background-color: var(--bg-color);
   min-height: 100vh;
   min-height: -webkit-fill-available;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   text-align: center;
 }
 
@@ -44,45 +36,23 @@ a:active {
 }
 
 .content {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-flex: 1;
-      -ms-flex: 1;
-          flex: 1;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
 }
 
 #tooltip {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   pointer-events: none;
   font-size: 0.8rem;
   background-color: var(--tooltip-bg);
   padding: 0.5rem;
   border-radius: 0.5rem;
   border: 1px solid var(--color);
-}
-
-.cell:hover {
-  opacity: var(--opacity);
 }
 
 .footer {
@@ -95,27 +65,13 @@ a:active {
   background-color: white;
 }
 
-.state {
-  stroke: var(--state-stroke);
-  stroke-width: .015rem;
-  pointer-events: none;
-  fill: none;
-}
 
-.county{
-  stroke: var(--county-stroke);
-  stroke-width: .005rem;
-}
 
-.county:hover{
-  fill: #f00075;
-}
-
-#legend-background{
+/* #legend-background {
   opacity: 0.75;
 }
 
 #legend-text {
   text-anchor: middle;
   font-size: 0.75rem;
-}
+} */
