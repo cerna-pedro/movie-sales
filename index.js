@@ -9,13 +9,12 @@ const pullData = async (url) => {
 };
 
 const createTree = async () => {
-  console.log('hello');
   const data = await pullData(dataURL);
   const margin = {
-    top: 50,
-    left: 50,
+    top: 5,
+    left: 5,
     right: 50,
-    bottom: 50,
+    bottom: 150,
   };
   const content = document.querySelector('.content');
   const svgContainer = document.querySelector('.svg-container');
@@ -32,121 +31,121 @@ const createTree = async () => {
     .append('svg')
     .attr('viewBox', `0 0 ${width} ${height}`)
     .attr('preserveAspectRatio', 'none');
-  // const g = svg.append('g');
-  // svg.call(
-  //   d3.zoom().on('zoom', (e) => {
-  //     g.attr('transform', e.transform);
-  //   })
-  // );
-  // const projection = d3.geoIdentity().fitExtent(
-  //   [
-  //     [margin.left, 0],
-  //     [width - margin.right, height],
-  //   ],
-  //   counties
-  // );
-  // const pathGenerator = d3.geoPath().projection(projection);
-  // const minEducation = d3.min(extentOfEducation);
-  // const maxEducation = d3.max(extentOfEducation);
-  // let colorDomain = d3.range(
-  //   minEducation,
-  //   maxEducation,
-  //   (maxEducation - minEducation) / 8
-  // );
-  // colorDomain = colorDomain.map((num) => Math.floor(num));
-  // const colorScale = d3
-  //   .scaleThreshold()
-  //   .domain(colorDomain)
-  //   .range(d3.schemeBlues[9]);
-  // g.append('g')
-  //   .selectAll('path')
-  //   .data(countyData)
-  //   .enter()
-  //   .append('path')
-  //   .attr('class', 'county')
-  //   .attr('d', pathGenerator)
-  //   .attr('data-fips', (d) => d.education.fips)
-  //   .attr('data-education', (d) => d.education.bachelorsOrHigher)
-  //   .attr('data-areaName', (d) => d.education.area_name)
-  //   .attr('data-state', (d) => d.education.state)
-  //   .attr('fill', (d) => colorScale(d.education.bachelorsOrHigher))
-  //   .on(
-  //     'mouseover pointerover pointerenter pointerdown pointermove gotpointercapture touchstart touchmove',
-  //     (e) => {
-  //       tooltip.transition().duration(300).style('opacity', 0.9);
-  //       tooltip.attr('data-education', `${e.target.dataset.education}`);
-  //       tooltip
-  //         .html(
-  //           `
-  //     <p>${e.target.dataset.areaName}, ${e.target.dataset.state}: ${e.target.dataset.education}%</p>
-  //         `
-  //         )
-  //         .style('position', 'absolute')
-  //         .style('left', `${e.clientX - 100}px`)
-  //         .style('top', `${e.clientY - 60}px`);
-  //     }
-  //   )
-  //   .on(
-  //     'mouseout pointerout pointerup pointercancel pointerleave lostpointercapture touchend',
-  //     () => {
-  //       tooltip.transition().duration(500).style('opacity', 0);
-  //     }
-  //   );
-  // g.append('path').attr('class', 'state').attr('d', pathGenerator(states));
-  // const sqSize =
-  //   (width - margin.left - margin.right) / colorScale.domain().length > 40
-  //     ? 40
-  //     : (width - margin.left - margin.right) / colorScale.domain().length;
-  // const offset = 5;
-  // const legend = svg
-  //   .append('g')
-  //   .attr('transform', `translate(${margin.left},${margin.top})`)
-  //   .attr('id', 'legend');
-  // legend
-  //   .append('rect')
-  //   .attr('id', 'legend-background')
-  //   .attr('x', -sqSize / 2)
-  //   .attr('y', -sqSize)
-  //   .attr('width', colorScale.domain().length * sqSize + sqSize)
-  //   .attr('height', 3 * sqSize)
-  //   .attr('rx', sqSize / 4)
-  //   .attr('fill', 'white');
-  // legend.append('text').text('LEGEND');
-  // legend
-  //   .selectAll(null)
-  //   .data(colorScale.domain())
-  //   .enter()
-  //   .append('rect')
-  //   .attr('id', 'legend-symbol')
-  //   .attr('x', (d, i) => i * sqSize)
-  //   .attr('y', offset)
-  //   .attr('width', sqSize)
-  //   .attr('height', sqSize)
-  //   .attr('fill', (d) => colorScale(d));
-  // legend
-  //   .selectAll(null)
-  //   .data(colorScale.domain())
-  //   .enter()
-  //   .append('text')
-  //   .text((d) => `${d}%`)
-  //   .attr('id', 'legend-text')
-  //   .attr('x', (d, i) => i * sqSize)
-  //   .attr('y', (d, i) => 2 * offset + sqSize)
-  //   .attr('alignment-baseline', 'hanging');
-  // legend
-  //   .selectAll(null)
-  //   .data(colorScale.domain())
-  //   .enter()
-  //   .append('path')
-  //   .attr(
-  //     'd',
-  //     (d, i) =>
-  //       `M ${i * sqSize} ${offset} L ${i * sqSize} ${sqSize + offset * 1.5}`
-  //   )
-  //   .attr('stroke', 'black')
-  //   .attr('id', 'legend-strokes')
-  //   .attr('x', (d, i) => i * sqSize)
-  //   .attr('y', (d, i) => 2 * offset + sqSize);
+  const root = d3
+    .hierarchy(data)
+    .sum((d) => d.value)
+    .sort((a, b) => b.data.value - a.data.value);
+  d3
+    .treemap()
+    .size([
+      width - margin.left - margin.right,
+      height - margin.top - margin.bottom,
+    ])(root);
+  const colorScale = d3.scaleOrdinal(d3.schemeSet2);
+  const group = svg
+    .selectAll('g')
+    .data(root.leaves())
+    .enter()
+    .append('g')
+    .attr('class', 'tile-group')
+    .attr('x', (d) => d.x0 + margin.left)
+    .attr('y', (d) => d.y0 + margin.top)
+    .attr(
+      'transform',
+      (d) => `translate(${d.x0 + margin.left},${d.y0 + margin.top})`
+    );
+  group
+    .append('rect')
+    .attr('class', 'tile')
+    .attr('width', (d) => d.x1 - d.x0)
+    .attr('height', (d) => d.y1 - d.y0)
+    .attr('data-name', (d) => d.data.name)
+    .attr('data-category', (d) => d.data.category)
+    .attr('data-value', (d) => d.data.value)
+    .style('fill', (d) => colorScale(d.data.category))
+    .on(
+      'mouseover pointerover pointerenter pointerdown pointermove gotpointercapture touchstart touchmove',
+      (e) => {
+        tooltip.transition().duration(300).style('opacity', 1);
+        tooltip.attr('data-value', `${e.target.dataset.value}`);
+        tooltip
+          .html(
+            `
+        <p>${e.target.dataset.name}</p>
+        <p>Genre: ${e.target.dataset.category}</p>
+        <p>${new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        })
+          .format(e.target.dataset.value)
+          .replace('.00', '')}</p>
+            `
+          )
+          .style('position', 'absolute')
+          .style('left', `${e.clientX - 20}px`)
+          .style('top', `${e.clientY - 60}px`);
+      }
+    )
+    .on(
+      'mouseout pointerout pointerup pointercancel pointerleave lostpointercapture touchend',
+      () => {
+        tooltip.transition().duration(500).style('opacity', 0);
+      }
+    );
+  group
+    .append('text')
+    .selectAll('tspan')
+    .data((d) => {
+      let titleArray = d.data.name.trim().split(' ');
+
+      if (titleArray.length > 2) {
+        titleArray = titleArray.filter((x, i) => i <= 1);
+        titleArray.push('...');
+      }
+
+      return titleArray;
+    })
+    .enter()
+    .append('tspan')
+    .attr('class', 'tile-label')
+    .attr('x', width / 300)
+    .attr('y', (d, i) => i * (height / 100) + height / 300)
+    .attr('alignment-baseline', 'hanging')
+    .text((d) => d)
+    .style('font-size', (d) => height / 100);
+  const legend = svg
+    .append('g')
+    .attr(
+      'transform',
+      `translate(${margin.left},${height - margin.bottom / 1.2})`
+    )
+    .attr('id', 'legend');
+  legend.append('text').text('LEGEND');
+  const sqSize =
+    (width - margin.left - margin.right) / 7 > 15
+      ? 15
+      : (width - margin.left - margin.right) / 7;
+  const offset = height / 100;
+  legend
+    .selectAll(null)
+    .data(colorScale.domain())
+    .enter()
+    .append('rect')
+    .attr('class', 'legend-item')
+    .attr('x', 0)
+    .attr('y', (d, i) => i * sqSize + offset)
+    .attr('width', sqSize)
+    .attr('height', sqSize)
+    .attr('fill', (d) => colorScale(d));
+  legend
+    .selectAll(null)
+    .data(colorScale.domain())
+    .enter()
+    .append('text')
+    .text((d) => d)
+    .attr('id', 'legend-text')
+    .attr('x', sqSize + offset)
+    .attr('y', (d, i) => i * sqSize + offset / 2 + offset + sqSize / 2);
 };
 
 createTree();
